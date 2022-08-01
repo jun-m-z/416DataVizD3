@@ -11,8 +11,8 @@ Audi,Gasoline,10,22,14,Europe
 Audi,Gasoline,4,32,24,Europe
 Bentley,Gasoline,8,22,13,Europe
 Bentley,Gasoline,12,20,12,Europe
-BMW,Diesel,4,41,30,
-BMW,Diesel,6,29,23,
+BMW,Diesel,4,41,30,Europe
+BMW,Diesel,6,29,23,Europe
 BMW,Electricity,0,109,133,Europe
 BMW,Gasoline,2,33,36,Europe
 BMW,Gasoline,3,29,28,Europe
@@ -29,7 +29,7 @@ Cadillac,Gasoline,8,21,14,North America
 Cadillac,Gasoline,4,32,22,North America
 Cadillac,Gasoline,6,26,18,North America
 Cadillac,Gasoline,8,21,15,North America
-Chevrolet,Diesel,4,29,21,
+Chevrolet,Diesel,4,29,21,North America
 Chevrolet,Electricity,0,110,128,North America
 Chevrolet,Gasoline,4,31,21,North America
 Chevrolet,Gasoline,8,23,15,North America
@@ -60,7 +60,7 @@ Ford,Gasoline,8,22,15,North America
 Genesis,Gasoline,6,24,17,Asia
 Genesis,Gasoline,8,23,15,Asia
 Genesis,Gasoline,6,27,17,Asia
-GMC,Diesel,4,29,21,
+GMC,Diesel,4,29,21,North America
 GMC,Gasoline,4,27,20,North America
 GMC,Gasoline,6,23,17,North America
 GMC,Gasoline,8,21,15,North America
@@ -74,7 +74,7 @@ Infiniti,Gasoline,4,30,22,Asia
 Infiniti,Gasoline,6,27,20,Asia
 Infiniti,Gasoline,8,22,15,Asia
 Infiniti,Gasoline,4,27,25,Asia
-Jaguar,Diesel,4,39,30,
+Jaguar,Diesel,4,39,30,Europe
 Jaguar,Gasoline,4,30,21,Europe
 Jaguar,Gasoline,6,26,18,Europe
 Jaguar,Gasoline,8,23,15,Europe
