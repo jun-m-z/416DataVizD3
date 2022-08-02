@@ -1,7 +1,7 @@
 ---
 layout: page
 title: "Fuel Efficiency and Historical Origin of Design, 2017"
-permalink: /home
+permalink: /
 ---
 
 {% include Overview.html %}
