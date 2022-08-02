@@ -1,0 +1,271 @@
+<html>
+<script src='https://d3js.org/d3.v5.min.js'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.5.1/d3-annotation.min.js"></script>
+
+<body onload='init()'>
+<svg width=700 height=500>
+</svg>
+
+<div id="my_dataviz">
+</div>
+
+<button onclick="window.location.href='https://w3docs.com';">
+      Gasoline Cars Only
+</button>
+<button onclick="window.location.href='https://w3docs.com';">
+      Diesel Cars Only
+</button>
+<button onclick="window.location.href='https://w3docs.com';">
+      Back to Overview
+</button>
+
+<style> circle {fill: lightblue; stroke: black;} </style>
+
+<script>
+async function init() {
+const data = await d3.csv("https://raw.githubusercontent.com/jun-m-z/416DataVizD3/main/cars2017_addedcontinents.csv")
+
+const margin = 50, mwidth = 700, mheight = 500, gwidth = 400;
+
+const svg = d3.select("svg");
+
+
+var gYAx = svg.append("g")
+  .attr("transform", "translate(" +margin+ "," +margin+ ")");
+
+var xYAx = svg.append("g")
+  .attr("transform", "translate(" +margin+ "," +(gwidth+margin)+ ")");
+
+
+var xScale = d3.scaleLog()
+  .domain([50, 150])
+  .range([0, gwidth]);
+
+var yScale = d3.scaleLog()
+  .domain([50, 150])
+  .range([gwidth, 0]);
+
+var xAx = d3.axisBottom(xScale).tickValues([10,20,50,100]).tickFormat(d3.format("~s"));
+var yAx = d3.axisLeft(yScale).tickValues([10,20,50,100]).tickFormat(d3.format("~s"));
+
+gYAx.call(yAx);
+xYAx.call(xAx);
+
+svg.append("text")
+      .attr("text-anchor", "end")
+      .attr("x", 450)
+      .attr("y", 500-20)
+      .text("Average City MPG")
+      .style("fill", "black");
+
+svg.append("text")
+      .attr("text-anchor", "end")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 20)
+      .attr("x", -50)
+      .text("Average Highway MPG")
+      .style("fill", "black");
+
+
+var tooltip = d3.select("#my_dataviz")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
+    .style("background-color", "white")
+    .style("border", "solid")
+    .style("border-width", "1px")
+    .style("border-radius", "5px")
+    .style("padding", "10px")
+
+var mouseover = function(d) {
+    tooltip
+      .style("opacity", 1);
+	  
+	 selected_cont = d.Continent;
+
+    d3.selectAll(".dot")
+      .transition()
+      .duration(200)
+      .style("fill", "lightgrey");
+
+    d3.selectAll("." + selected_cont)
+      .transition()
+      .duration(200)
+      .style("fill", color(selected_cont))
+      .attr("r", function(d) {return Number.parseInt(d.EngineCylinders) + 4;})
+	  }
+
+var mousemove = function(d) {
+    tooltip
+	  .html("Make: " + d.Make +
+      "<br>Average Highway MPG of this " + d.Make + ": " + d.AverageHighwayMPG +
+	  "<br>Average City MPG of this " + d.Make + ": " + d.AverageCityMPG +
+	  "<br>Number of Engine Cylinders in this " + d.Make + ": " + d.EngineCylinders
+	  )
+      .style("left", (d3.mouse(this)[0]+90) + "px")
+      .style("top", (d3.mouse(this)[1]) + "px")
+	  }
+	  
+var mouseleave = function(d) {
+    tooltip
+      .transition()
+      .duration(200)
+      .style("opacity", 0)
+	  }
+
+var color = d3.scaleOrdinal()
+    .domain(["Europe", "NorthAmerica", "Asia" ])
+    .range(["#440154ff", "#21908dff", "#fde725ff"]);
+
+var blank = svg.append("g")
+  .attr("transform", "translate(" + 50 + "," + 50 + ")");
+
+blank.selectAll("circle")
+	.data(data.filter(function(d){return d.Fuel == "Electricity" }))
+	.enter()
+	.append("circle")
+		.attr("cx", function(d) {return xScale(d.AverageCityMPG);})
+		.attr("cy", function(d) {return yScale(d.AverageHighwayMPG);})
+		.attr("r", function(d) {return Number.parseInt(d.EngineCylinders) + 3;})
+		.style("fill", function(d) {return color(d.Continent);})
+		.on("mouseover", mouseover )
+		.on("mousemove", mousemove )
+		.on("mouseleave", mouseleave);
+
+
+// Add legend: circles	
+var valuesToShow = [0, 4, 12]
+var xCircle = 490
+var xLabel = 540
+blank.selectAll("legend")
+  .data(valuesToShow)
+  .enter()
+  .append("circle")
+	.attr("cx", xCircle)
+	.attr("cy", function(d){return 350-d})
+	.attr("r", function(d){return 3+d})
+	.style("fill", "none")
+	.attr("stroke", "black");	
+	
+blank.selectAll("legend")
+  .data(valuesToShow)
+  .enter()
+  .append("line")
+	.attr('x1', function(d){ return xCircle + 0.8*d + 2} )
+	.attr('x2', xLabel)
+	.attr('y1', function(d){ return 350-2*d } )
+	.attr('y2', function(d){ return 350-2*d } )
+	.attr('stroke', 'black')
+	.style('stroke-dasharray', ('2,2'))
+
+blank.selectAll("legend")
+  .data(valuesToShow)
+  .enter()
+  .append("text")
+	.attr('x', xLabel)
+	.attr('y', function(d){ return 350-2*d } )
+	.text( function(d){ return d } )
+	.style("font-size", 8)
+	.attr('alignment-baseline', 'middle')
+
+blank.append("text")
+  .attr('x', xCircle)
+  .attr("y", 300 +15)
+  .text("Number of Engine Cylinders")
+  .attr("text-anchor", "middle")
+  .style("font-size", 10)
+
+// Add one dot in the legend for each name.
+var leg_size = 20
+var allgroups = ["Europe", "NorthAmerica", "Asia"]
+svg.selectAll("myrect")
+  .data(allgroups)
+  .enter()
+  .append("circle")
+	.attr("cx", 490)
+	.attr("cy", function(d,i){return 280 + i*(leg_size+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+	.attr("r", 7)
+	.style("fill", function(d){ return color(d)})
+	//.on("mouseover", highlight)
+	//.on("mouseleave", doNotHighlight)
+
+// Add labels beside legend dots
+svg.selectAll("mylabels")
+  .data(allgroups)
+  .enter()
+  .append("text")
+	.attr("x", 490 + leg_size*.8)
+	.attr("y", function(d,i){ return 271 + i * (leg_size + 5) + (leg_size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+	.style("fill", function(d){ return color(d)})
+	.text(function(d){ return d})
+	.attr("text-anchor", "left")
+	.style("alignment-baseline", "middle")
+	//.on("mouseover", highlight)
+	//.on("mouseleave", doNotHighlight)
+
+blank.append("text")
+  .attr('x', xCircle)
+  .attr("y", 200 +15)
+  .text("Historical Corporate HQ")
+  .attr("text-anchor", "middle")
+  .style("font-size", 10);
+  
+
+
+//TITLE
+svg.append("text")
+	.attr("x", (gwidth*3/4))             
+	.attr("y", 30)
+	.attr("text-anchor", "middle")  
+	.style("font-size", "20px") 
+	.style("text-decoration", "underline")  
+	.text("Electric Vehicles Efficiency and Historical Origin of Design, 2017");
+	
+const electric_data = data.filter(function(d){return d.Fuel == "Electricity" });	
+
+blank.append("text")
+  .attr('x', xCircle)
+  .attr("y", 100 +15)
+  .text("Overall Average Highway MPG: " + d3.format(".1f")(d3.mean(electric_data, d => d.AverageHighwayMPG)))
+  .attr("text-anchor", "middle")
+  .style("font-size", 12);
+  blank.append("text")
+  .attr('x', xCircle)
+  .attr("y", 120 +15)
+  .text("Overall Average City MPG: " + d3.format(".1f")(d3.mean(electric_data, d => d.AverageCityMPG)))
+  .attr("text-anchor", "middle")
+  .style("font-size", 12);
+  blank.append("text")
+  .attr('x', xCircle)
+  .attr("y", 140 +15)
+  .text("Overall Average Cylinders: " + d3.format(".1f")(d3.mean(electric_data, d => d.EngineCylinders)))
+  .attr("text-anchor", "middle")
+  .style("font-size", 12);
+
+
+
+const annotation1 = [
+  {
+    note: {
+      label: "Hover over each dot to see the specifics of each vehicle",
+      title: "Asia has avg. efficiency of 129/104, N.A. of 113/101, Europe of 113/98",
+      align: "middle",  // try right or left
+      wrap: 100,  // try something smaller to see text split in several lines
+      padding: 5   // More = text lower
+    },
+    color: ["#69b3a2"],
+    x: 380,
+    y: 200,
+    dy: 40,
+    dx: 10
+  }
+]
+
+// Add annotation to the chart
+const makeAnnotations1 = d3.annotation()
+  .annotations(annotation1)
+
+svg.append('g').call(makeAnnotations1)}
+</script>
+</body>
+</html>
