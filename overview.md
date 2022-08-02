@@ -2,5 +2,5 @@ layout: page
 title: "Fuel Efficiency and Historical Origin of Design, 2017"
 permalink: /overview
 
-{% include Overview.html %}
+{% include Overview_NoAnnotations.html %}
 
